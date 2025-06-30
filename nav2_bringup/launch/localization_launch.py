@@ -42,7 +42,7 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
 
     lifecycle_nodes = ['map_server', 'amcl']
-
+    lifecycle_nodes = ['map_server']
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -152,12 +152,12 @@ def generate_launch_description():
                 name='map_server',
                 parameters=[configured_params],
                 remappings=remappings),
-            ComposableNode(
-                package='nav2_amcl',
-                plugin='nav2_amcl::AmclNode',
-                name='amcl',
-                parameters=[configured_params],
-                remappings=remappings),
+            # ComposableNode(
+            #     package='nav2_amcl',
+            #     plugin='nav2_amcl::AmclNode',
+            #     name='amcl',
+            #     parameters=[configured_params],
+            #     remappings=remappings),
             ComposableNode(
                 package='nav2_lifecycle_manager',
                 plugin='nav2_lifecycle_manager::LifecycleManager',
@@ -190,3 +190,6 @@ def generate_launch_description():
     ld.add_action(load_composable_nodes)
 
     return ld
+
+if __name__ == '__main__':
+    generate_launch_description()

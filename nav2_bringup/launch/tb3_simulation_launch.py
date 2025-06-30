@@ -49,8 +49,8 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('use_rviz')
     headless = LaunchConfiguration('headless')
     world = LaunchConfiguration('world')
-    pose = {'x': LaunchConfiguration('x_pose', default='-2.00'),
-            'y': LaunchConfiguration('y_pose', default='-0.50'),
+    pose = {'x': LaunchConfiguration('x_pose', default='-12.00'),
+            'y': LaunchConfiguration('y_pose', default='-5.50'),
             'z': LaunchConfiguration('z_pose', default='0.01'),
             'R': LaunchConfiguration('roll', default='0.00'),
             'P': LaunchConfiguration('pitch', default='0.00'),
@@ -85,8 +85,9 @@ def generate_launch_description():
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(
-            bringup_dir, 'maps', 'turtlebot3_world.yaml'),
+        # default_value=os.path.join(
+        #     bringup_dir, 'maps', 'turtlebot3_world.yaml'),
+        default_value='/home/hello/agv_ws/src/0624/map_1750730854.yaml',
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -250,3 +251,6 @@ def generate_launch_description():
     ld.add_action(bringup_cmd)
 
     return ld
+
+if __name__ == '__main__':
+    generate_launch_description()
