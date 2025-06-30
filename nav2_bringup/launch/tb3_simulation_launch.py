@@ -18,7 +18,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 
-from launch import LaunchDescription
+from launch import LaunchDescription, LaunchService
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -135,7 +135,7 @@ def generate_launch_description():
 
     declare_simulator_cmd = DeclareLaunchArgument(
         'headless',
-        default_value='True',
+        default_value='False',
         description='Whether to execute gzclient)')
 
     declare_world_cmd = DeclareLaunchArgument(
@@ -252,5 +252,13 @@ def generate_launch_description():
 
     return ld
 
+
+def main():
+    ld = generate_launch_description()
+    ls = LaunchService()
+    ls.include_launch_description(ld)
+    return ls.run()
+
+
 if __name__ == '__main__':
-    generate_launch_description()
+    main()
