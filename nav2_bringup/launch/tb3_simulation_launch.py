@@ -87,7 +87,7 @@ def generate_launch_description():
         'map',
         # default_value=os.path.join(
         #     bringup_dir, 'maps', 'turtlebot3_world.yaml'),
-        default_value='/home/hello/agv_ws/src/maps/0624/map_1750730854.yaml',
+        default_value='/home/hello/agv_ws/src/maps/0701/20250701.yaml',
         description='Full path to map file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(

@@ -10,28 +10,6 @@ from tf2_ros.transform_listener import TransformListener
 from tf2_ros import TransformException
 
 
-'''
-感觉是朝向有问题
-pose:
-  pose:
-    position:
-      x: -0.36453723907470703
-      y: 2.656648874282837
-      z: 0.0
-    orientation:
-      x: 0.0
-      y: 0.0
-      z: 0.005152609848396846
-      w: 0.9999867252177652
-      x: -0.36453723907470703
-      y: 2.656648874282837
-      z: 0.0
-    orientation:
-      x: 0.0
-      y: 0.0
-      z: 0.005152609848396846
-      w: 0.9999867252177652'''
-
 class MyNode(Node):
     def __init__(self):
         super().__init__('sim_localization_1')
@@ -107,7 +85,7 @@ class MyNode(Node):
         recovered_trans, recovered_quat = to_trans_quat(odom2map_matrix_)
 
         odom2map_transform_stamped: TransformStamped = self.get_transform(target_frame='map',
-                                                                                source_frame='odom')
+                                                                          source_frame='odom')
         odom2map_transform_matrix_ = to_mat(odom2map_transform_stamped.transform.translation,
                                             odom2map_transform_stamped.transform.rotation)
         pass
