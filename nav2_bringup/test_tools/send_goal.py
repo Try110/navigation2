@@ -99,6 +99,7 @@ class FibonacciActionClient(Node):
     def get_result_callback(self, future):
         result = future.result().result
         self.get_logger().info('Result: {0}'.format(result))
+        self._timer = self.create_timer()
         self.send_goal()
 
     def feedback_callback(self, feedback_msg):
