@@ -151,15 +151,15 @@ controller_server:
       # 前瞻时间(s) - 用于计算速度相关的前瞻距离(若启用速度缩放)
       lookahead_time: 1.5
       # 朝向旋转角速度(rad/s) - 启用朝向旋转时的最大旋转速度
-      rotate_to_heading_angular_vel: 1.8
+      rotate_to_heading_angular_vel: 0.25
       # TF变换容忍度(s) - 等待TF变换的最大时间
       transform_tolerance: 0.1
       # 是否启用速度缩放前瞻距离 - 若为false则使用固定前瞻距离
       use_velocity_scaled_lookahead_dist: true
       # 接近目标时的最小线速度(m/s) - 防止在目标点附近振荡
-      min_approach_linear_velocity: 0.1
+      min_approach_linear_velocity: 0.2
       # 接近目标速度缩放距离(m) - 距离目标多远开始降低速度
-      approach_velocity_scaling_dist: 1.0
+      approach_velocity_scaling_dist: 1.2
       # 是否启用碰撞检测 - 预测轨迹上的潜在碰撞
       use_collision_detection: false
       # 碰撞检测最大时间(s) - 向前预测的最大时间范围
