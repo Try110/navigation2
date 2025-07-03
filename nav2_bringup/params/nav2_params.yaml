@@ -136,7 +136,7 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.1
-      yaw_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.05
 
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
@@ -179,13 +179,13 @@ controller_server:
       # 是否启用初始朝向旋转 - 使机器人先转向路径方向再前进
       use_rotate_to_heading: true
       # 触发朝向旋转的最小角度差(rad) - 角度差超过此值时触发旋转
-      rotate_to_heading_min_angle: 0.3
+      rotate_to_heading_min_angle: 0.2
       # 最大角加速度(rad/s²) - 限制旋转时的加速度
       max_angular_accel: 3.2
       # 机器人位姿搜索最大距离(m) - 在路径上搜索机器人最近点的最大范围
       max_robot_pose_search_dist: 10.0
       # 是否在目标点后插值曲率 - 防止在目标点附近振荡
-      interpolate_curvature_after_goal: false
+      interpolate_curvature_after_goal: true
       # 障碍物距离缩放阈值(m) - 小于此距离时开始减速
       cost_scaling_dist: 0.3
       # 障碍物距离缩放增益 - 控制减速的敏感度(值越小减速越剧烈)

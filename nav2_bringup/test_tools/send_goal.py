@@ -2,9 +2,10 @@ import math
 import time
 import typing
 
+import numpy as np
 import rclpy
 import yaml
-from geometry_msgs.msg import PoseStamped, Pose
+from geometry_msgs.msg import PoseStamped, Pose, PolygonStamped, Point32
 from loguru import logger
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
@@ -50,6 +51,10 @@ class MyPose:
             yaw_err -= math.pi
         return yaw_err, dis
 
+    def to_x_y_yaw(self):
+        yaw = euler_from_quaternion([self.qx, self.qy, self.qz, self.qw])[2]
+        return self.x, self.y, yaw
+
 
 def read_poses_from_yaml(file_path):
     """从YAML文件读取所有pose数据"""
@@ -70,7 +75,67 @@ def read_poses_from_yaml(file_path):
     return poses
 
 
-class FibonacciActionClient(Node):
+class PolygonSender:
+    def __init__(self, node: Node):
+        self.node = node
+        self.polygon_publisher_ = self.node.create_publisher(PolygonStamped, 'visualization_polygon', 10)
+        self.polygon_timer = self.node.create_timer(1.0, self.send_polygon_timer_callback)  # 每秒发送一次
+
+        self.goal_pose: MyPose = MyPose()
+
+    def set_goal_pose(self, goal_pose: MyPose):
+        self.goal_pose = goal_pose
+
+    def send_polygon_timer_callback(self):
+        def rotate_point(point, angle):
+            """Rotate a 2D point around origin by angle (in radians)"""
+            c, s = np.cos(angle), np.sin(angle)
+            R = np.array([[c, -s], [s, c]])
+            return np.dot(R, point)
+
+        polygon_transformed = []
+
+        x, y, theta = self.goal_pose.to_x_y_yaw()
+        polygon_local = [
+            [-0.385, 0.0],
+            [-0.376, -0.134],
+            [-0.331, -0.224],
+            [-0.272, -0.269],
+            [0.281, -0.266],
+            [0.355, -0.203],
+            [0.379, -0.104],
+            [0.385, 0.0],
+            [0.379, 0.125],
+            [0.343, 0.212],
+            [0.293, 0.26],
+            [-0.284, 0.263],
+            [-0.331, 0.221],
+            [-0.367, 0.158]
+        ]
+        for pt in polygon_local:
+            # 旋转
+            rotated = rotate_point(pt, theta)
+            # 平移
+            transformed = (rotated[0] + x, rotated[1] + y)
+            polygon_transformed.append(transformed)
+
+        # 构造 PolygonStamped 消息
+        msg = PolygonStamped()
+        msg.header.stamp = self.node.get_clock().now().to_msg()
+        msg.header.frame_id = "map"  # 确保与你的坐标系一致，如 map 或 odom
+
+        for p in polygon_transformed:
+            point = Point32()
+            point.x = float(p[0])
+            point.y = float(p[1])
+            point.z = 0.0
+            msg.polygon.points.append(point)
+
+        self.polygon_publisher_.publish(msg)
+        self.node.get_logger().info('Publishing polygon.')
+
+
+class NavActionActionClient(Node):
 
     def __init__(self):
         super().__init__('goal_sender_node')
@@ -82,6 +147,7 @@ class FibonacciActionClient(Node):
         self.pose_index: int = 0
         self.goal_pose: MyPose = self.pose_list[self.pose_index % len(self.pose_list)]
         self.delay_sec = 10
+        self.polygon_sender = PolygonSender(self)
         self.send_goal()
 
     def get_transform(self, target_frame: str, source_frame: str) -> TransformStamped:
@@ -120,6 +186,8 @@ class FibonacciActionClient(Node):
         self.goal_pose: MyPose = self.pose_list[self.pose_index % len(self.pose_list)]
         logger.info(f'Goal: {self.goal_pose}')
         self.start_time = time.time()
+        self.polygon_sender.set_goal_pose(
+            self.goal_pose)
         _send_goal(self.goal_pose)
 
     def goal_response_callback(self, future):
@@ -160,12 +228,14 @@ class FibonacciActionClient(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    action_client = FibonacciActionClient()
+    action_client = NavActionActionClient()
 
     rclpy.spin(action_client)
     rclpy.shutdown()
 
 
 if __name__ == '__main__':
-    logger.add('send_goal.log')
+    from datetime import datetime
+
+    logger.add(f'send_goal-{datetime.now().strftime("%m-%d_%H-%M-%S")}.log')
     main()
