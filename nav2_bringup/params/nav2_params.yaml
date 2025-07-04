@@ -143,11 +143,11 @@ controller_server:
       # 最大期望线速度(m/s) - 机器人追踪路径时的目标速度
       desired_linear_vel: 0.5
       # 固定前瞻距离(m) - 用于寻找路径上的目标点
-      lookahead_dist: 0.7
+      lookahead_dist: 0.55
       # 最小前瞻距离(m) - 速度缩放前瞻距离的下限
       min_lookahead_dist: 0.4
       # 最大前瞻距离(m) - 速度缩放前瞻距离的上限
-      max_lookahead_dist: 0.7
+      max_lookahead_dist: 0.8
       # 前瞻时间(s) - 用于计算速度相关的前瞻距离(若启用速度缩放)
       lookahead_time: 1.5
       # 朝向旋转角速度(rad/s) - 启用朝向旋转时的最大旋转速度
@@ -155,9 +155,9 @@ controller_server:
       # TF变换容忍度(s) - 等待TF变换的最大时间
       transform_tolerance: 0.1
       # 是否启用速度缩放前瞻距离 - 若为false则使用固定前瞻距离
-      use_velocity_scaled_lookahead_dist: true
+      use_velocity_scaled_lookahead_dist: false
       # 接近目标时的最小线速度(m/s) - 防止在目标点附近振荡
-      min_approach_linear_velocity: 0.2
+      min_approach_linear_velocity: 0.1
       # 接近目标速度缩放距离(m) - 距离目标多远开始降低速度
       approach_velocity_scaling_dist: 1.2
       # 是否启用碰撞检测 - 预测轨迹上的潜在碰撞
@@ -178,13 +178,13 @@ controller_server:
       curvature_lookahead_dist: 1.0
       # 是否启用初始朝向旋转 - 使机器人先转向路径方向再前进
       use_rotate_to_heading: true
-      # 触发朝向旋转的最小角度差(rad) - 角度差超过此值时触发旋转
-      rotate_to_heading_min_angle: 0.2
+      # 触发朝向旋转的最小角度差(rad) - 角度差超过此值时触发旋转,这个是在跟踪过程中，太大会不准，太小会不丝滑
+      rotate_to_heading_min_angle: 0.5
       # 最大角加速度(rad/s²) - 限制旋转时的加速度
       max_angular_accel: 3.2
       # 机器人位姿搜索最大距离(m) - 在路径上搜索机器人最近点的最大范围
       max_robot_pose_search_dist: 10.0
-      # 是否在目标点后插值曲率 - 防止在目标点附近振荡
+      # 是否在目标点后插点 - 防止在目标点附近振荡,这个参数貌似没有在代码中使用
       interpolate_curvature_after_goal: true
       # 障碍物距离缩放阈值(m) - 小于此距离时开始减速
       cost_scaling_dist: 0.3
@@ -296,7 +296,7 @@ planner_server:
 
     GridBased:
       plugin: "nav2_smac_planner/SmacPlanner2D" # In Iron and older versions, "/" was used instead of "::"
-      tolerance: 0.125                      # tolerance for planning if unable to reach exact pose, in meters
+      tolerance: 0.05                      # tolerance for planning if unable to reach exact pose, in meters
       downsample_costmap: false             # whether or not to downsample the map
       downsampling_factor: 1                # multiplier for the resolution of the costmap layer (e.g. 2 on a 5cm costmap would be 10cm)
       allow_unknown: true                   # allow traveling in unknown space
