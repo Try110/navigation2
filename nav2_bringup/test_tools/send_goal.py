@@ -148,7 +148,7 @@ class NavActionActionClient(Node):
         self.goal_pose: MyPose = self.pose_list[self.pose_index % len(self.pose_list)]
         self.delay_sec = 10
         self.polygon_sender = PolygonSender(self)
-        self.send_goal()
+        self.delay_to_send_goal()
 
     def get_transform(self, target_frame: str, source_frame: str) -> TransformStamped:
         transform_stamped = TransformStamped()

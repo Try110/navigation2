@@ -161,7 +161,8 @@ def generate_launch_description():
     start_gazebo_server_cmd = ExecuteProcess(
         condition=IfCondition(use_simulator),
         cmd=['gzserver', '-s', 'libgazebo_ros_init.so',
-             '-s', 'libgazebo_ros_factory.so', world],
+             '-s', 'libgazebo_ros_factory.so', world,
+             '--ros-args', '--params-file', '/home/hello/agv_ws/src/navigation2/nav2_bringup/params/gazebo_params.yaml'],
         cwd=[launch_dir], output='screen')
 
     start_gazebo_client_cmd = ExecuteProcess(
@@ -182,7 +183,10 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[{'use_sim_time': use_sim_time,
-                     'robot_description': robot_description}],
+                     'robot_description': robot_description,
+                     'ignore_timestamp': True,
+                     'publish_frequency': 50.0},
+                    ],
         remappings=remappings)
 
     start_gazebo_spawner_cmd = Node(
