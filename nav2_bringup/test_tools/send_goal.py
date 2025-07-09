@@ -237,5 +237,5 @@ def main(args=None):
 if __name__ == '__main__':
     from datetime import datetime
 
-    logger.add(f'send_goal-{datetime.now().strftime("%m-%d_%H-%M-%S")}.log')
+    logger.add(f'send_goal-{datetime.now().strftime("logs/%m-%d_%H-%M-%S")}.log')
     main()
